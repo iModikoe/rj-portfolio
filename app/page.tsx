@@ -282,7 +282,9 @@ export default function Page() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col items-center gap-6">
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }} > <div className="flex flex-col items-center gap-6">
+            
+          </div>
             <img src={PROFILE.photo} alt="Profile" className="rounded-2xl w-72 h-72 object-cover shadow-lg" />
             <Card className="rounded-2xl w-full">
               <CardContent className="p-6">
