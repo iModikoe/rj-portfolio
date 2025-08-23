@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --bg:#ffffff; --fg:#0b0f13; --muted:#5b6570; }
+html { scroll-behavior: smooth; }
+body { @apply bg-background text-foreground; }
+
+
+/* Dark */
+.dark {
+  --bg: #0b0f13;      /* page background */
+  --fg: #e7eaee;      /* main text       */
+  --muted: #a0acb8;   /* secondary text  */
+}
+
+html { scroll-behavior: smooth; }
+body { @apply bg-background text-foreground transition-colors duration-300; }
+.container { @apply max-w-6xl mx-auto px-4; }
