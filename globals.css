@@ -1,0 +1,473 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Light port of the reference layout.
+
+   Same structure, spacing, motion and hover behaviour — inverted
+   to a light scheme. The two colour rules that make the
+   inversion work:
+
+   1. The bright mint of the original is decoration only. As text
+      or as a fill on white it sits at 3.5:1, so `--primary` is a
+      deeper teal (5.6:1 on white, and 5.6:1 for white on it) and
+      `--primary-bright` is kept purely for tints and glows.
+   2. The lime hover swap is a FILL, never text. Ink on it reads
+      14:1; lime on white would be 1.4:1.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --bg-alt: #f4f7f6;
+  --card-bg: #ffffff;
+  --card-border: rgba(16, 24, 32, 0.1);
+  --card-border-strong: rgba(16, 24, 32, 0.16);
+
+  --text: #101820;
+  --text-2: #3d4a54;
+  --text-3: #5a6771;
+
+  --primary: #097563;
+  --primary-dark: #06584a;
+  --primary-bright: #37e1bc;
+  --primary-soft: rgba(9, 117, 99, 0.1);
+  --primary-glow: rgba(9, 117, 99, 0.25);
+
+  --accent: #e4ef3e;
+  --secondary: #4f46e5;
+
+  --shadow-card: 0 15px 30px rgba(16, 24, 32, 0.1);
+  --shadow-lift: 0 10px 20px rgba(9, 117, 99, 0.22);
+  --shadow-image: 0 20px 30px rgba(16, 24, 32, 0.14);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text antialiased;
+    font-weight: 400;
+    /* The horizontal reveals sit translated 40px sideways until they fire, so
+       un-revealed content would widen the page. `clip` contains it without
+       making the body a scroll container; `hidden` is the fallback for
+       browsers that do not support `clip`. */
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--primary-soft);
+    color: var(--text);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  /* Contain each section's own horizontal reveal overshoot. `clip` on one axis
+     keeps `overflow-y: visible`, so the cards can still lift and cast a shadow
+     outside the section — `hidden` would have cut them off. */
+  main > section {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8;
+  }
+
+  .section-pad {
+    @apply py-20 lg:py-24;
+  }
+
+  /* ---------- Section header ---------- */
+
+  .section-header {
+    @apply mb-14 text-center lg:mb-16;
+  }
+
+  .section-header h2 {
+    @apply text-[2rem] leading-tight sm:text-[2.5rem] lg:text-[3rem];
+    background: linear-gradient(to right, var(--text), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .section-header p {
+    @apply mx-auto mt-4 max-w-[700px] text-[1.0625rem] leading-relaxed text-text-2;
+  }
+
+  .section-label {
+    @apply inline-flex items-center gap-3 text-[0.75rem] font-semibold uppercase tracking-[2px] text-primary;
+  }
+
+  /* ---------- Buttons — pill, lift on hover, lime swap ---------- */
+
+  .btn {
+    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-7 text-[0.9375rem] font-semibold;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: #ffffff;
+    border: 2px solid var(--primary);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--text);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: var(--text);
+    border: 2px solid var(--text);
+  }
+
+  .btn-outline:hover {
+    background-color: rgba(16, 24, 32, 0.06);
+    transform: translateY(-3px);
+  }
+
+  .btn-contact {
+    @apply inline-flex min-h-[40px] items-center rounded-full px-5 text-[0.875rem] font-semibold;
+    background-color: var(--primary);
+    color: #ffffff;
+    transition: all 0.3s ease;
+  }
+
+  .btn-contact:hover {
+    background-color: var(--accent);
+    color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--primary-glow);
+  }
+
+  /* ---------- Nav link with the growing underline ---------- */
+
+  .nav-link {
+    @apply relative mx-1 px-4 py-2 text-[0.9375rem] font-medium text-text-2;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute bottom-0 left-1/2 h-[2px] w-0;
+    transform: translateX(-50%);
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current="true"] {
+    color: var(--text);
+  }
+
+  .nav-link:hover::after,
+  .nav-link[aria-current="true"]::after {
+    width: 70%;
+  }
+
+  /* ---------- Cards — lift, shadow, accent border ---------- */
+
+  .card {
+    @apply h-full rounded-2xl p-7 sm:p-8;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: all 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-card);
+    border-color: rgba(9, 117, 99, 0.35);
+  }
+
+  /* ---------- Badges and tags ---------- */
+
+  .status-badge {
+    @apply inline-block rounded-full px-2.5 py-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.5px];
+    background-color: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium;
+    background-color: var(--primary-soft);
+    color: var(--primary);
+    transition: all 0.3s ease;
+  }
+
+  .tag-plain {
+    @apply inline-flex items-center rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium text-text-2;
+    background-color: rgba(16, 24, 32, 0.05);
+    border: 1px solid var(--card-border);
+  }
+
+  /* ---------- Skill matrix ---------- */
+
+  .skill-list li {
+    @apply relative mb-2 pl-5 text-[0.9375rem] leading-relaxed text-text-2;
+  }
+
+  .skill-list li::before {
+    content: "▹";
+    @apply absolute left-0;
+    color: var(--primary);
+  }
+
+  /* ---------- Experience timeline ---------- */
+
+  .timeline {
+    @apply relative;
+  }
+
+  .timeline::before {
+    content: "";
+    @apply absolute w-[2px];
+    left: 17px;
+    top: 8px;
+    bottom: 8px;
+    background: var(--card-border-strong);
+  }
+
+  .timeline-item {
+    @apply relative flex items-start gap-6 pb-8;
+  }
+
+  .timeline-item:last-child {
+    @apply pb-0;
+  }
+
+  .timeline-marker {
+    @apply relative z-[1] grid h-9 w-9 flex-[0_0_2.25rem] place-items-center rounded-full text-[0.875rem] font-bold;
+    background: var(--bg-alt);
+    border: 2px solid var(--card-border-strong);
+    color: var(--text-3);
+  }
+
+  .timeline-marker.current {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+  }
+
+  /* ---------- Project image with overlay ---------- */
+
+  .project-image {
+    @apply relative overflow-hidden rounded-2xl;
+    box-shadow: var(--shadow-image);
+    transition: all 0.3s ease;
+  }
+
+  .project-image img {
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .image-overlay {
+    @apply absolute inset-0 flex items-center justify-center opacity-0;
+    background-color: rgba(9, 117, 99, 0.88);
+    transition: opacity 0.3s ease;
+  }
+
+  .project-image:hover .image-overlay,
+  .project-image:focus-within .image-overlay {
+    @apply opacity-100;
+  }
+
+  .project-image:hover img,
+  .project-image:focus-within img {
+    transform: scale(1.05);
+  }
+
+  /* ---------- Contact ---------- */
+
+  .contact-icon {
+    @apply grid h-12 w-12 shrink-0 place-items-center rounded-full;
+    background-color: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .social-link {
+    @apply grid h-11 w-11 place-items-center rounded-full text-text;
+    background-color: rgba(16, 24, 32, 0.06);
+    transition: all 0.3s ease;
+  }
+
+  .social-link:hover {
+    background-color: var(--primary);
+    color: #ffffff;
+    transform: translateY(-3px);
+  }
+
+  /* ---------- Back to top ---------- */
+
+  .back-to-top {
+    @apply fixed bottom-6 right-6 z-50 grid h-12 w-12 place-items-center rounded-full opacity-0;
+    background-color: var(--primary);
+    color: #ffffff;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .back-to-top.active {
+    @apply opacity-100;
+    visibility: visible;
+  }
+
+  .back-to-top:hover {
+    background-color: var(--accent);
+    color: var(--text);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px var(--primary-glow);
+  }
+
+  /* ---------- Gradient text ---------- */
+
+  .text-gradient {
+    background: linear-gradient(to right, var(--text), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Teal to indigo — both ends stay readable on white. The original ran
+     teal to lime, which would fall to 1.4:1 at the lime end. */
+  .text-gradient-accent {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* ============================================================
+   Motion — AOS-style scroll reveal, 0.8s ease-in-out.
+   Content is visible until the head script adds `.js`, so the
+   page is complete without JavaScript.
+   ============================================================ */
+
+.js [data-reveal] {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js [data-reveal="fade-up"] {
+  transform: translateY(40px);
+}
+.js [data-reveal="fade-down"] {
+  transform: translateY(-40px);
+}
+.js [data-reveal="fade-right"] {
+  transform: translateX(-40px);
+}
+.js [data-reveal="fade-left"] {
+  transform: translateX(40px);
+}
+.js [data-reveal="zoom-in"] {
+  transform: scale(0.94);
+}
+
+.js [data-reveal][data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-arrow {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  40% {
+    transform: translateY(-20px) translateX(-50%);
+  }
+  60% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+}
+
+.spinner {
+  @apply h-12 w-12 rounded-full;
+  border: 3px solid rgba(16, 24, 32, 0.12);
+  border-top-color: var(--primary);
+  animation: spin 1s linear infinite;
+}
+
+.scroll-indicator {
+  @apply absolute left-1/2 flex flex-col items-center gap-2 text-text-3;
+  bottom: 2rem;
+  animation: bounce-arrow 2s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reveal without movement, and stop the scroll arrow bouncing. */
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .scroll-indicator {
+    animation: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+}

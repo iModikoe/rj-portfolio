@@ -12,6 +12,9 @@
 # vercel
 .vercel
 
+# typescript
+*.tsbuildinfo
+
 # misc
 .DS_Store
 npm-debug.log*
